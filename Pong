@@ -1,0 +1,126 @@
+import turtle
+
+#setting up the window
+window = turtle.Screen()
+window.title("Simple Pong Game by Aya")
+window.bgcolor("pink")
+window.setup(width=800, height=600)
+#stops window from updating, to speed up the game
+window.tracer(0)
+
+#Score
+scoreA = 0
+scoreB = 0
+
+#Paddle A
+paddleA = turtle.Turtle() #creates an object for the paddle
+paddleA.speed(0) #maximum possible speed
+paddleA.shape("square")
+paddleA.shapesize(stretch_wid=5, stretch_len=1)
+paddleA.color("white")
+paddleA.penup() #don't want to draw lines which is the defaul
+paddleA.goto(-350, 0)
+
+#Paddle B
+paddleB = turtle.Turtle() #creates an object for the paddle
+paddleB.speed(0) #maximum possible speed
+paddleB.shape("square")
+paddleB.shapesize(stretch_wid=5, stretch_len=1)
+paddleB.color("white")
+paddleB.penup() #don't want to draw lines which is the defaul
+paddleB.goto(350, 0)
+
+#Ball
+ball = turtle.Turtle() #creates an object for the paddle
+ball.speed(0) #maximum possible speed
+ball.shape("circle")
+ball.color("white")
+ball.penup() #don't want to draw lines which is the defaul
+ball.goto(0, 0)
+ball.dx = 0.2
+ball.dy = 0.2
+
+
+# Turtle Pen
+pen = turtle.Turtle()
+pen.speed(0)
+pen.color("white")
+pen.penup() #don't draw a line
+pen.hideturtle()
+pen.goto(0,260)
+pen.write("Player A: 0  PlayerB: 0", align="center", font=("Courier", 20, "normal"))
+
+
+#Move paddle A Up
+def paddleA_Up():
+    y = paddleA.ycor() #gets the y cordinate of the paddle A
+    y += 20
+    paddleA.sety(y)
+
+#Mode paddle A Down
+def paddleA_Down():
+    y = paddleA.ycor() #gets the y cordinate of the paddle A
+    y -= 20
+    paddleA.sety(y)
+
+#Move paddle B Up
+def paddleB_Up():
+    y = paddleB.ycor() #gets the y cordinate of the paddle A
+    y += 20
+    paddleB.sety(y)
+
+#Mode paddle B Down
+def paddleB_Down():
+    y = paddleB.ycor() #gets the y cordinate of the paddle A
+    y -= 20
+    paddleB.sety(y)
+
+#Keys input
+window.listen() # waits for input
+window.onkeypress(paddleA_Up, "w")
+window.onkeypress(paddleA_Down, "s")
+window.onkeypress(paddleB_Up, "Up")
+window.onkeypress(paddleB_Down, "Down")
+
+#Main game loop
+while True:
+    #everytime loop starts it updates the game
+    window.update()
+
+    #Move the ball
+    ball.setx(ball.xcor() + ball.dx)
+    ball.sety(ball.ycor() + ball.dy)
+
+    #Create Border (Height)
+    if ball.ycor() > 290: #300-20px taking in account for the ball
+        ball.sety(290)
+        ball.dy *= -1 #reverses direction
+
+    if ball.ycor() < -290: #300-20px taking in account for the ball
+        ball.sety(-290)
+        ball.dy *= -1 #reverses direction
+    
+    #If ball goes past
+    if ball.xcor() > 390:
+        ball.goto(0, 0) #resets
+        ball.dx *= -1
+        scoreA += 1
+        pen.clear()
+        pen.write("Player A: {}  PlayerB: {}".format(scoreA, scoreB), align="center", font=("Courier", 20, "normal"))
+    
+    if ball.xcor() < -390:
+        ball.goto(0, 0) #resets
+        ball.dx *= -1
+        scoreB += 1
+        pen.clear()
+        pen.write("Player A: {}  PlayerB: {}".format(scoreA, scoreB), align="center", font=("Courier", 20, "normal"))
+    
+    #Ball touches paddle
+    if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddleB.ycor() + 40) and (ball.ycor() > paddleB.ycor() - 40):
+        ball.setx(340)
+        ball.dx *= -1
+
+    #Ball touches paddle
+    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddleA.ycor() + 40) and (ball.ycor() > paddleA.ycor() - 40):
+        ball.setx(-340)
+        ball.dx *= -1
